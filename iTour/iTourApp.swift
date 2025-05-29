@@ -13,7 +13,7 @@ struct iTourApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
-        }        .modelContainer(for: Destination.self) //tells swiftUI to create a persistent data storange container from destination
+        }        .modelContainer(for: [Destination.self, Sight.self]) //tells swiftUI to create a persistent data storange container from destination
 
     }
 }

@@ -9,8 +9,8 @@ import SwiftUI
 import SwiftData
 
 struct EditDestinationView: View {
-    
     @Bindable var destination: Destination
+    @State private var newSightName = ""
     
     var body: some View {
         Form {
@@ -26,9 +26,42 @@ struct EditDestinationView: View {
                 }
                 .pickerStyle(SegmentedPickerStyle())
             }
+            
+            Section("Sights") {
+                ForEach(destination.sights) {
+                    sight in Text(sight.name)
+                   
+                }
+                .onDelete(perform: deleteSight)
+                
+                
+                HStack {
+                    TextField("Add a new sight in \(destination.name)", text: $newSightName) //binding to state variable
+                    Button("Add", action: addSight)
+                        .buttonStyle(.borderedProminent)
+                        .disabled(newSightName.isEmpty)
+                        .cornerRadius(10)
+                }
+
+                
+            }
         }
         .navigationTitle("Edit Destination")
         .navigationBarTitleDisplayMode(.inline)
+    }
+    func addSight() {
+        guard newSightName.isEmpty == false else { return } //checks if the string is not empty -> exits the function
+        withAnimation {
+            let sight = Sight(name: newSightName)
+            destination.sights.append(sight)
+            newSightName = "" // resets to empty after sight is added
+        }
+    }
+    
+    func deleteSight(_ indexSet: IndexSet) {
+        for index in indexSet {
+            destination.sights.remove(at: index)
+        }
     }
 }
 

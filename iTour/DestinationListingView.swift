@@ -20,15 +20,25 @@ struct DestinationListingView: View {
                     Text(destination.name)
                         .font(.headline)
                     Text(destination.date.formatted(date: .long, time: .shortened))
+                    Text(destination.sights.count == 1 ? "\(destination.sights.count) sight" : "\(destination.sights.count) sights")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
                 }
                 }
             }.onDelete(perform: deleteDestinations)
         }
     }
     
-    init(sort: SortDescriptor<Destination>) {
-        _destinations = Query(sort: [sort])
+    init(sort: SortDescriptor<Destination>, searchString: String) {
+        _destinations = Query(filter: #Predicate {
+            if searchString.isEmpty {
+                return true //"Item passes the filter, include it into query results"
+            } else {
+                return $0.name.localizedStandardContains(searchString)
+            }
+        }, sort: [sort])
     }
+
     
     func deleteDestinations(_ indexSet: IndexSet) {
         for index in indexSet {
@@ -39,5 +49,5 @@ struct DestinationListingView: View {
 }
 
 #Preview {
-    DestinationListingView(sort: SortDescriptor(\Destination.name))
+    DestinationListingView(sort: SortDescriptor(\Destination.name), searchString: "")
 }
